@@ -47,7 +47,7 @@ const labelTimer = document.querySelector('.timer');
 const containerApp = document.querySelector('.app');
 const containerMovements = document.querySelector('.movements');
 
-const btnLogin = document.querySelector('.login__btn');
+const btnLogin = document.querySelector('.login__btn'); //This login btn is inside of a form tag in the HTML document, meaning that if we press enter on either of the input fields next to the login btn, the callback function inside of the eventlistener will be called as if it were a click.
 const btnTransfer = document.querySelector('.form__btn--transfer');
 const btnLoan = document.querySelector('.form__btn--loan');
 const btnClose = document.querySelector('.form__btn--close');
@@ -77,33 +77,29 @@ const displayMovements = function (movements) {
   });
 };
 
-displayMovements(account1.movements);
-
 const calcDisplayBalance = function (movements) {
   const balance = movements.reduce(
     (accumulator, element) => accumulator + element
   );
   labelBalance.textContent = `${balance} EUR`;
 };
-calcDisplayBalance(account1.movements);
 
-const calcDisplaySummary = function (movements) {
-  const incomes = movements
+const calcDisplaySummary = function (account) {
+  const incomes = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumIn.textContent = `${incomes}€`;
-  const outcomes = movements
+  const outcomes = account.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumOut.textContent = `${Math.abs(outcomes)}€`;
-  const interest = movements
+  const interest = account.movements
     .filter(mov => mov > 0)
-    .map(deposit => (deposit * 1.2) / 100)
+    .map(deposit => (deposit * account.interestRate) / 100)
     .filter(deposit => deposit >= 1) //Interest is only given to deposits that are at least 1 dollar.
     .reduce((acc, int) => acc + int);
   labelSumInterest.textContent = `${interest}€`;
 };
-calcDisplaySummary(account1.movements);
 
 const createUsernames = function (accs) {
   accs.forEach(acc => {
@@ -116,3 +112,32 @@ const createUsernames = function (accs) {
 };
 
 createUsernames(accounts);
+
+let currentAcccount;
+
+btnLogin.addEventListener('click', function (e) {
+  //Prevent form from submitting
+  e.preventDefault();
+  currentAcccount = accounts.find(
+    account => account.user === inputLoginUsername.value
+  );
+
+  if (currentAcccount?.pin === Number(inputLoginPin.value)) {
+    //Display UI and Message
+    labelWelcome.textContent = `Welcome back, ${currentAcccount.owner
+      .split(' ')
+      .at(0)}!`;
+    containerApp.style.opacity = 100;
+
+    //Clear input fields
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
+
+    //Display movements
+    displayMovements(currentAcccount.movements);
+    //Display balance
+    calcDisplayBalance(currentAcccount.movements);
+    //Display summary
+    calcDisplaySummary(currentAcccount);
+  }
+});

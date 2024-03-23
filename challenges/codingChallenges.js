@@ -91,3 +91,17 @@ const calcAverageHumanAgeArrowChain = ages =>
 
 console.log(calcAverageHumanAgeArrowChain([5, 2, 4, 1, 15, 8, 3]));
 console.log(calcAverageHumanAgeArrowChain([16, 6, 10, 5, 6, 1, 4]));
+
+//Micro Challenge transform a find method into a for of:
+
+const account = accounts.find(account => account.owner === 'Jessica Davis');
+
+let selectedAccount;
+for (let account of accounts) {
+  if (account === 'Jessica Davis') {
+    selectedAccount = account;
+    break;
+  }
+}
+
+//The above code works only with the accounts array of objects that exists in the script module.
