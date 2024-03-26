@@ -189,3 +189,21 @@ btnClose.addEventListener('click', function (e) {
   //Clear input fields
   inputCloseUsername.value = inputClosePin.value = '';
 });
+
+//Loan feature
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+  const loanAmount = Number(inputLoanAmount.value);
+  if (
+    loanAmount > 0 &&
+    currentAccount.movements.some(movement => movement > loanAmount * 0.1)
+  ) {
+    //Above, we check if any of the movements in the current account meets the condition of being greater than the 10% of the loan amount with the some method.
+    //Loan is transferred to the current account
+    currentAccount.movements.push(loanAmount);
+    //Update UI
+    updateUI(currentAccount);
+  }
+  //Clear input fields
+  inputLoanAmount.value = '';
+});
